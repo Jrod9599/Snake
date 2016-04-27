@@ -1,6 +1,7 @@
 
 # include <iostream>
 # include <gsim/gs.h>
+# include <stdlib.h>
 # include "app_window.h"
 
 AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
@@ -10,12 +11,22 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    addMenuEntry ( "Option 0", evOption0 );
    addMenuEntry ( "Option 1", evOption1 );
    _viewaxis = true;
+   _up = false;
+   _down = false;
+   _right = false;
+   _left = false;
    _fovy = GS_TORAD(60.0f);
    _rotx = _roty = 0;
    _w = w;
    _h = h;
    up = 0;
    right = 0;
+   size = 1;
+   hit = 0;
+
+   xx.push_back(0.10);
+   yy.push_back(0);
+
  }
 
 void AppWindow::initPrograms ()
@@ -28,6 +39,7 @@ void AppWindow::initPrograms ()
    // Init my scene objects:
    _axis.init ( _prog );
    _fruit.init(_prog);
+   _snake.init(_prog);
  }
 
 // mouse events are in window coordinates, but your 2D scene is in [0,1]x[0,1],
@@ -45,11 +57,15 @@ void AppWindow::glutKeyboard ( unsigned char key, int x, int y )
    switch ( key )
     { 
 		case ' ': _viewaxis = !_viewaxis; redraw(); break;
-		//case 'a': redraw(); break;
-		case 'w': up += 0.01; redraw(); break;
-		case 's': up -= 0.01; redraw(); break;
-		case 'a': right -= 0.01; redraw(); break;
-		case 'd': right += 0.01; redraw(); break;
+		//case 'w': _up = true; redraw(); break; 
+		case 'w': up += 0.10; redraw(); break;
+		//case 's': _down = true; redraw(); break;
+		case 's': up -= 0.10; redraw(); break;
+		//case 'a': _left = true; redraw(); break;
+		case 'a': right -= 0.10; redraw(); break;
+		//case 'd': _right = true; redraw(); break;
+		case 'd': right += 0.10; redraw(); break;
+		case 'h': hit = 1; redraw(); break;
 		case 27 : exit(1); // Esc was pressed
 
 
@@ -102,9 +118,23 @@ void AppWindow::glutDisplay ()
  {
    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+
    if ( _axis.changed ) _axis.build(1.0f); 
    if (_fruit.changed) _fruit.build(right, up);
-   
+   if (_snake.changed) {
+	
+	   it = xx.begin();
+	   xx.insert(it, right);
+
+	   it = yy.begin();
+	   yy.insert(it, up);
+
+	   if (hit == 1) {
+		   size += 4;
+		   hit = 0;
+	   }
+	   _snake.build(size, xx, yy, right, up);
+   }
    // Define our scene transformation:
    GsMat rx, ry, stransf;
    rx.rotx ( _rotx );
@@ -124,10 +154,48 @@ void AppWindow::glutDisplay ()
   
    // Draw:
    if ( _viewaxis ) _axis.draw ( stransf, sproj );
-   _fruit.draw(stransf, sproj);
+   //_fruit.draw(stransf, sproj);
+   _snake.draw(stransf, sproj);
   
    // Swap buffers and draw:
    glFlush();         // flush the pipeline (usually not necessary)
    glutSwapBuffers(); // we were drawing to the back buffer, now bring it to the front
 }
 
+void AppWindow::glutIdle() {
+/*
+	if (_up == true) {
+		_down = false;
+		_right = false;
+		_left = false;
+
+		up += 0.01;
+		_snake.changed = true;
+	}
+	else if (_down == true) {
+		_up = false;
+		_right = false;
+		_left = false;
+
+		up -= 0.01;
+		_snake.changed = true;
+	}
+	else if (_right == true) {
+		_down = false;
+		_up = false;
+		_left = false;
+
+		right += 0.01;
+		_snake.changed = true;
+	}
+	else if (_left == true) {
+		_down = false;
+		_right = false;
+		_up = false;
+
+		right -= 0.01;
+		_snake.changed = true;
+
+	}
+	*/
+}

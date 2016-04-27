@@ -17,32 +17,33 @@ void Snake::init(const GlProgram& prog)
 	uniform_location(1, "vProj");
 }
 
-void Snake::build(float x, float y )
+void Snake::build(int size, std::vector<float>& x, std::vector<float>& y, float right, float up )
 {
 	int i;
 	float r = 0.01;
 	const float d = r / 20.0f;
+	const float depth = 0.0;
+
 	ranX = 1.0; //(rand() % 100) / 100;
 	ranY = 2.0;//(rand() % 100) / 100;
 
 	P.clear(); C.clear();   // set size to zero, just in case
-	P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
+	
 
-	P.push_back(GsVec(-r, 0, 0)); P.push_back(GsVec(r, 0, 0));
-	P.push_back(GsVec(r - d, -d, 0)); P.push_back(GsVec(r, 0, 0));
-	P.push_back(GsVec(r - d, d, 0)); P.push_back(GsVec(r, 0, 0));
-	for (i = 0; i<6; i++) C.push_back(GsColor::red); // recall that GsColor has r,g,b,a values
+	for (int i = 0; i < size; i++) {
 
-	P.push_back(GsVec(0, -r, 0)); P.push_back(GsVec(0, r, 0));
-	P.push_back(GsVec(0, r - d, -d)); P.push_back(GsVec(0, r, 0));
-	P.push_back(GsVec(0, r - d, d)); P.push_back(GsVec(0, r, 0));
-	for (i = 0; i<6; i++) C.push_back(GsColor::green);
+		if (i == 0) {
+			P.push_back(GsVec(right,up, 0.0f));
+			P.push_back(GsVec(x[i], y[i], 0.0f));
+			for (int i = 0; i < 2; i++) C.push_back(GsColor::lightgray);
+		}
+		else {
 
-	glColor3f(0, 0, 1);
-	P.push_back(GsVec(0, 0, -r)); P.push_back(GsVec(0, 0, r));
-	P.push_back(GsVec(0, -d, r - d)); P.push_back(GsVec(0, 0, r));
-	P.push_back(GsVec(0, d, r - d)); P.push_back(GsVec(0, 0, r));
-	for (i = 0; i<6; i++) C.push_back(GsColor::blue);
+			P.push_back(GsVec(x[i-1], y[i-1], 0.0f));
+			P.push_back(GsVec(x[i], y[i], 0.0f));
+			for (int i = 0; i < 2; i++) C.push_back(GsColor::lightgray);
+		}
+	}
 
 	// send data to OpenGL buffers:
 	glBindBuffer(GL_ARRAY_BUFFER, buf[0]);

@@ -27,7 +27,14 @@ class AppWindow : public GlutWindow
     enum MenuEv { evOption0, evOption1 };
     float _rotx, _roty, _fovy;
     bool  _viewaxis, _viewsnake;
-    int _w, _h;
+	bool _up,_down,_left, _right;
+    int _w, _h, size;
+
+	int hit;
+
+	std::vector<float> xx;
+	std::vector<float> yy;
+	std::vector<float>::iterator it;
 
 	float up, right;
 
@@ -44,6 +51,7 @@ class AppWindow : public GlutWindow
     virtual void glutMotion ( int x, int y );
     virtual void glutDisplay ();
     virtual void glutReshape ( int w, int h );
+	virtual void glutIdle();
 	
 	float rt =  1;
 	float rb = 1;

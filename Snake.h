@@ -23,7 +23,7 @@ private:
 public:
 	Snake();
 	void init(const GlProgram& prog);
-	void build(float x, float y);
+	void build(int size, std::vector<float>& x , std::vector<float>& y ,float right, float up);
 	void draw(GsMat& tr, GsMat& pr);
 };
 
