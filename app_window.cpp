@@ -23,6 +23,7 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    right = 0;
    size = 1;
    hit = 0;
+   test = 0.0f;
 
    xx.push_back(0.10);
    yy.push_back(0);
@@ -57,14 +58,14 @@ void AppWindow::glutKeyboard ( unsigned char key, int x, int y )
    switch ( key )
     { 
 		case ' ': _viewaxis = !_viewaxis; redraw(); break;
-		//case 'w': _up = true; redraw(); break; 
-		case 'w': up += 0.10; redraw(); break;
-		//case 's': _down = true; redraw(); break;
-		case 's': up -= 0.10; redraw(); break;
-		//case 'a': _left = true; redraw(); break;
-		case 'a': right -= 0.10; redraw(); break;
-		//case 'd': _right = true; redraw(); break;
-		case 'd': right += 0.10; redraw(); break;
+		case 'w': _down = _right = _left = false; _up = true; redraw(); break;
+		//case 'w': up += 0.10; redraw(); break;
+		case 's': _up = _right = _left = false; _down = true; redraw(); break;
+		//case 's': up -= 0.10; redraw(); break;
+		case 'a': _down = _right = _up = false; _left = true; redraw(); break;
+		//case 'a': right -= 0.10; redraw(); break;
+		case 'd': _down = _up = _left = false; _right = true; redraw(); break;
+		//case 'd': right += 0.10; redraw(); break;
 		case 'h': hit = 1; redraw(); break;
 		case 27 : exit(1); // Esc was pressed
 
@@ -104,6 +105,7 @@ void AppWindow::glutMotion ( int x, int y )
 void AppWindow::glutMenu ( int m )
  {
    std::cout<<"Menu Event: "<<m<<std::endl;
+   //std::cout<<
  }
 
 void AppWindow::glutReshape ( int w, int h )
@@ -163,39 +165,41 @@ void AppWindow::glutDisplay ()
 }
 
 void AppWindow::glutIdle() {
-/*
-	if (_up == true) {
-		_down = false;
-		_right = false;
-		_left = false;
 
-		up += 0.01;
+	int time = glutGet(GLUT_ELAPSED_TIME);
+
+	if (_up == true) {
+		
+		if ((time % 100) == 0){
+			up += 0.05;
 		_snake.changed = true;
+		redraw();
+		}
 	}
 	else if (_down == true) {
-		_up = false;
-		_right = false;
-		_left = false;
 
-		up -= 0.01;
-		_snake.changed = true;
+		if ((time % 100) == 0) {
+			up -= 0.05;
+			_snake.changed = true;
+			redraw();
+		}
+		
 	}
 	else if (_right == true) {
-		_down = false;
-		_up = false;
-		_left = false;
 
-		right += 0.01;
-		_snake.changed = true;
+		if ((time % 100) == 0) {
+			right += 0.05;
+			_snake.changed = true;
+			redraw();
+		}
 	}
 	else if (_left == true) {
-		_down = false;
-		_right = false;
-		_up = false;
 
-		right -= 0.01;
-		_snake.changed = true;
-
+		if ((time % 100) == 0) {
+			right -= 0.05;
+			_snake.changed = true;
+			redraw();
+		}
 	}
-	*/
+	std::cout << "Time:\t" << time << "\tup:\t" << up << std::endl;
 }

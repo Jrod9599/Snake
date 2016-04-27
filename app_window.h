@@ -36,7 +36,7 @@ class AppWindow : public GlutWindow
 	std::vector<float> yy;
 	std::vector<float>::iterator it;
 
-	float up, right;
+	float up, right, test;
 
    public :
     AppWindow ( const char* label, int x, int y, int w, int h );
