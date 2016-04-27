@@ -59,13 +59,15 @@ void AppWindow::glutKeyboard ( unsigned char key, int x, int y )
     { 
 		case ' ': _viewaxis = !_viewaxis; redraw(); break;
 		case 'w': _down = _right = _left = false; _up = true; redraw(); break;
-		//case 'w': up += 0.10; redraw(); break;
 		case 's': _up = _right = _left = false; _down = true; redraw(); break;
-		//case 's': up -= 0.10; redraw(); break;
 		case 'a': _down = _right = _up = false; _left = true; redraw(); break;
-		//case 'a': right -= 0.10; redraw(); break;
 		case 'd': _down = _up = _left = false; _right = true; redraw(); break;
+		
+		//case 'w': up += 0.10; redraw(); break;
+		//case 's': up -= 0.10; redraw(); break;
+		//case 'a': right -= 0.10; redraw(); break;
 		//case 'd': right += 0.10; redraw(); break;
+		
 		case 'h': hit = 1; redraw(); break;
 		case 27 : exit(1); // Esc was pressed
 
@@ -171,34 +173,44 @@ void AppWindow::glutIdle() {
 	if (_up == true) {
 		
 		if ((time % 100) == 0){
-			up += 0.05;
-		_snake.changed = true;
-		redraw();
+			up += 0.01;
+			_snake.changed = true;
+			redraw();
+
+			if (up >= 1.0) exit(1);
+
 		}
 	}
 	else if (_down == true) {
 
 		if ((time % 100) == 0) {
-			up -= 0.05;
+			up -= 0.01;
 			_snake.changed = true;
 			redraw();
+
+			if (up <= -1.0) exit(1);
 		}
 		
 	}
 	else if (_right == true) {
 
 		if ((time % 100) == 0) {
-			right += 0.05;
+			right += 0.01;
 			_snake.changed = true;
 			redraw();
+
+			if (right >= 1.0) exit(1);
+
 		}
 	}
 	else if (_left == true) {
 
 		if ((time % 100) == 0) {
-			right -= 0.05;
+			right -= 0.01;
 			_snake.changed = true;
 			redraw();
+
+			if (right <= -1.0) exit(1);
 		}
 	}
 	std::cout << "Time:\t" << time << "\tup:\t" << up << std::endl;
