@@ -26,8 +26,8 @@ void SoAxis::build ( float r)
    P.clear(); C.clear();   // set size to zero, just in case
   P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
    
-   P.push_back( GsVec( -r,  1, 0 ) );
-   P.push_back( GsVec( r, 1, 0 ) );
+   P.push_back( GsVec( -r,  r, 0 ) );
+   P.push_back( GsVec( r, r, 0 ) );
    for ( i=0; i<2; i++ ) C.push_back( GsColor::lightgray ); // recall that GsColor has r,g,b,a values
 
    P.push_back( GsVec( -r, -r,  0 ) );
@@ -39,8 +39,8 @@ void SoAxis::build ( float r)
 	for (i = 0; i<2; i++) C.push_back(GsColor::lightgray );
 
    glColor3f ( 0, 0, 1 );		
-   P.push_back( GsVec( -r, -1,  0 ) );
-   P.push_back( GsVec( r, -1, 0 ) );
+   P.push_back( GsVec( -r, -r,  0 ) );
+   P.push_back( GsVec( r, -r, 0 ) );
    for ( i=0; i<2; i++ ) C.push_back( GsColor::lightgray );
    
    // send data to OpenGL buffers:

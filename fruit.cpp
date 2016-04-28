@@ -1,5 +1,6 @@
 
 # include "fruit.h"
+# include <stdLib.h>
 
 Fruit::Fruit()
 {
@@ -17,13 +18,16 @@ void Fruit::init(const GlProgram& prog)
 	uniform_location(1, "vProj");
 }
 
+//Build is where you would give the fruit its shape and its color
 void Fruit::build(float x, float y)
 {
+
 	int i;
-	float r = 0.1;
+	float r = 0.01;
 	const float d = r / 20.0f;
-	ranX = 1.0; //(rand() % 100) / 100;
-	ranY = 2.0;//(rand() % 100) / 100;
+
+//	x = (rand() % 100 + 1) / 100;
+//	y = (rand() % 100 + 1) / 100;
 
 	P.clear(); C.clear();   // set size to zero, just in case
 	P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
@@ -58,6 +62,7 @@ void Fruit::build(float x, float y)
 	P.resize(0); C.resize(0);
 }
 
+//Draw function tells program to draw it on the screen
 void Fruit::draw(GsMat& tr, GsMat& pr)
 {
 	// Draw Lines:

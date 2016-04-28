@@ -15,17 +15,22 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    _down = false;
    _right = false;
    _left = false;
+   _gameover = false;
    _fovy = GS_TORAD(60.0f);
    _rotx = _roty = 0;
    _w = w;
    _h = h;
    up = 0;
    right = 0;
-   size = 1;
+   size = 2;
    hit = 0;
    test = 0.0f;
 
-   xx.push_back(0.10);
+   randx = randy = 0;
+
+   xx.push_back(0.0);
+   yy.push_back(0.0);
+   xx.push_back(0.05);
    yy.push_back(0);
 
  }
@@ -107,6 +112,7 @@ void AppWindow::glutMotion ( int x, int y )
 void AppWindow::glutMenu ( int m )
  {
    std::cout<<"Menu Event: "<<m<<std::endl;
+   std::cout << "W = Up \n S = Down \n A = Left \n D = Right \n Hit any direction to begin";
    //std::cout<<
  }
 
@@ -122,9 +128,9 @@ void AppWindow::glutDisplay ()
  {
    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-
-   if ( _axis.changed ) _axis.build(1.0f); 
-   if (_fruit.changed) _fruit.build(right, up);
+   //if a change is detected it will rebuild
+   if ( _axis.changed ) _axis.build(1.01f); 
+   if (_fruit.changed) _fruit.build(randx, randy);
    if (_snake.changed) {
 	
 	   it = xx.begin();
@@ -166,52 +172,108 @@ void AppWindow::glutDisplay ()
    glutSwapBuffers(); // we were drawing to the back buffer, now bring it to the front
 }
 
+bool Collision(int sizes, int SoF, float randx, float randy, std::vector<float> &x, std::vector<float> &y) {
+	//Snake collides against himself
+	if (SoF == 1) {
+
+		for (int i = 1; i < sizes; i++) {
+
+			if (x[1] == x[i]) {
+				
+				for (int j = 1; j < sizes; j++) {
+					if (y[1] == y[j])
+						return true;
+				}
+			}
+			
+		}
+		return false;
+
+	}
+	//Snake collides with fruit
+	else if (SoF == 2) {
+
+		for (int i = 0; i < sizes; i++) {
+
+			if (randx == x[i]) {
+				if (randy == y[i])
+					return true;
+			}
+				
+		}
+		return false;
+	}
+	else
+		return false;
+}
+
+
+//glutIdle() function is always running in the background, as long as the program is running so will glutIdle()
+//so any movements or detections should be placed in this function 
 void AppWindow::glutIdle() {
 
 	int time = glutGet(GLUT_ELAPSED_TIME);
+	
+	if (_gameover == false) {
+		if (_up == true) {
 
-	if (_up == true) {
-		
-		if ((time % 100) == 0){
-			up += 0.01;
-			_snake.changed = true;
-			redraw();
+			if ((time % 200) == 0) {
+				up += 0.05;
+				_snake.changed = true;					//signify a change has occured
+				redraw();								//redraw with change
 
-			if (up >= 1.0) exit(1);
+				if (up >= 1.01) _gameover = true;
+				if(_gameover == false)
+					_gameover = Collision(size, 1, 0.0f,0.0f,xx,yy);
+				if (_gameover = false)
+					_gameover = Collision(size, 2, randx, randy, xx, yy);
+			}
+		}
+		else if (_down == true) {
+
+			if ((time % 200) == 0) {
+				
+				up -= 0.05;
+				_snake.changed = true;
+				redraw();
+
+				if (up <= -1.01) _gameover = true;
+				if (_gameover == false)
+					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover = false)
+					_gameover = Collision(size, 2, randx, randy, xx, yy);
+			}
 
 		}
-	}
-	else if (_down == true) {
+		else if (_right == true) {
 
-		if ((time % 100) == 0) {
-			up -= 0.01;
-			_snake.changed = true;
-			redraw();
+			if ((time % 200) == 0) {
+				right += 0.05;
+				_snake.changed = true;
+				redraw();
 
-			if (up <= -1.0) exit(1);
+				if (right >= 1.01) _gameover = true;
+				if (_gameover == false)
+					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover = false)
+					_gameover = Collision(size, 2, randx, randy, xx, yy);
+
+			}
 		}
-		
-	}
-	else if (_right == true) {
+		else if (_left == true) {
 
-		if ((time % 100) == 0) {
-			right += 0.01;
-			_snake.changed = true;
-			redraw();
+			if ((time % 200) == 0) {
+				right -= 0.05;
+				_snake.changed = true;
+				redraw();
 
-			if (right >= 1.0) exit(1);
-
-		}
-	}
-	else if (_left == true) {
-
-		if ((time % 100) == 0) {
-			right -= 0.01;
-			_snake.changed = true;
-			redraw();
-
-			if (right <= -1.0) exit(1);
+				if (right <= -1.01) _gameover = true;
+				if (_gameover == false)
+					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover = false)
+					_gameover = Collision(size, 2, randx, randy, xx, yy);
+			}
 		}
 	}
-	std::cout << "Time:\t" << time << "\tup:\t" << up << std::endl;
+
 }

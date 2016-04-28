@@ -28,7 +28,10 @@ class AppWindow : public GlutWindow
     float _rotx, _roty, _fovy;
     bool  _viewaxis, _viewsnake;
 	bool _up,_down,_left, _right;
+	bool _gameover;
     int _w, _h, size;
+
+	float randx, randy;
 
 	int hit;
 
@@ -52,6 +55,7 @@ class AppWindow : public GlutWindow
     virtual void glutDisplay ();
     virtual void glutReshape ( int w, int h );
 	virtual void glutIdle();
+	//virtual bool Collision(int size, int SoF, float randx, float randy, std::vector<float> x, std::vector<float> y);
 	
 	float rt =  1;
 	float rb = 1;
