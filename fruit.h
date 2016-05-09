@@ -7,7 +7,7 @@
 # include <vector>
 # include <gsim/gs_color.h>
 # include <gsim/gs_vec.h>
-# include "ogl_tools.h"-
+# include "ogl_tools.h"
 
 // Scene objects should be implemented in their own classes; and
 // here is an example of how to organize a scene object in a class.

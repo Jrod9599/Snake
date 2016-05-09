@@ -23,28 +23,26 @@ void Fruit::build(float x, float y)
 {
 
 	int i;
-	float r = 0.01;
+	float r = 0.0175f;
 	const float d = r / 20.0f;
-
-//	x = (rand() % 100 + 1) / 100;
-//	y = (rand() % 100 + 1) / 100;
 
 	P.clear(); C.clear();   // set size to zero, just in case
 	P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
-
+	//top of box
 	P.push_back(GsVec(-r + x, r + y, 0));
 	P.push_back(GsVec(r + x, r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red); // recall that GsColor has r,g,b,a values
-
+	//left wall of box
 	P.push_back(GsVec(-r + x, -r + y, 0));
 	P.push_back(GsVec(-r + x, r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red);
-
+	//right wall of box
 	P.push_back(GsVec(r + x, -r + y, 0));
 	P.push_back(GsVec(r + x, r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red);
 
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
+	//bottom of box
 	P.push_back(GsVec(-r + x, -r + y, 0));
 	P.push_back(GsVec(r + x, -r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red);

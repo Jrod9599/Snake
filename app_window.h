@@ -5,6 +5,8 @@
 
 # include <gsim/gs_color.h>
 # include <gsim/gs_vec.h>
+# include <ctime>
+//# include <stdlib.h>
 # include "ogl_tools.h"
 # include "glut_window.h"
 # include "so_axis.h"
@@ -28,7 +30,9 @@ class AppWindow : public GlutWindow
     float _rotx, _roty, _fovy;
     bool  _viewaxis, _viewsnake;
 	bool _up,_down,_left, _right;
-	bool _gameover;
+	bool _direction_change;
+	bool _gameover, start;
+	bool hit_fruit;
     int _w, _h, size;
 
 	float randx, randy;

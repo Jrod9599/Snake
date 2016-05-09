@@ -4,6 +4,8 @@
 # include <stdlib.h>
 # include "app_window.h"
 
+using namespace std;
+
 AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
           :GlutWindow ( label, x, y, w, h )
  {
@@ -16,22 +18,26 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    _right = false;
    _left = false;
    _gameover = false;
+   _direction_change = false;
+   start = false;
+   hit_fruit = false;
    _fovy = GS_TORAD(60.0f);
    _rotx = _roty = 0;
    _w = w;
    _h = h;
-   up = 0;
-   right = 0;
+   up = 0.0;
+   right = 0.0;
    size = 2;
    hit = 0;
    test = 0.0f;
 
-   randx = randy = 0;
+   randx = -0.5f;
+   randy = 0.5f;
 
-   xx.push_back(0.0);
-   yy.push_back(0.0);
-   xx.push_back(0.05);
-   yy.push_back(0);
+   xx.push_back(0.0f);
+   yy.push_back(0.0f);
+   xx.push_back(0.05f);
+   yy.push_back(0.0f);
 
  }
 
@@ -60,24 +66,36 @@ GsVec2 AppWindow::windowToScene ( const GsVec2& v )
 // Called every time there is a window event
 void AppWindow::glutKeyboard ( unsigned char key, int x, int y )
  {
-   switch ( key )
-    { 
-		case ' ': _viewaxis = !_viewaxis; redraw(); break;
-		case 'w': _down = _right = _left = false; _up = true; redraw(); break;
-		case 's': _up = _right = _left = false; _down = true; redraw(); break;
-		case 'a': _down = _right = _up = false; _left = true; redraw(); break;
-		case 'd': _down = _up = _left = false; _right = true; redraw(); break;
-		
-		//case 'w': up += 0.10; redraw(); break;
-		//case 's': up -= 0.10; redraw(); break;
-		//case 'a': right -= 0.10; redraw(); break;
-		//case 'd': right += 0.10; redraw(); break;
-		
-		case 'h': hit = 1; redraw(); break;
-		case 27 : exit(1); // Esc was pressed
+	 if (start == false) {
+		 switch (key)
+		 {
+
+		 case 'w': if (_down == false) { _down = _right = _left = false;  _up = true; redraw(); } start = true; break;
+		 case 's': if (_up == false) { _up = _right = _left = false; _down = true; redraw(); }start = true; break;
+		 case 'a': if (_right == false) { _down = _right = _up = false; _left = true; redraw(); }start = true; break;
+		 case 'd': if (_left == false) { _down = _up = _left = false; _right = true; redraw(); }start = true; break;
+	
+		 case 'h': hit = 1; redraw(); break;
+		 case 27: exit(1); // Esc was pressed
 
 
-	}
+		 }
+	 }
+	 else {
+
+		 switch (key) {
+		 case 'w': if (_down == false) { _down = _right = _left = false;  _up = true;  _direction_change = true; redraw(); } break;
+		 case 's': if (_up == false) { _up = _right = _left = false; _down = true;  _direction_change = true; redraw(); }break;
+		 case 'a': if (_right == false) { _down = _right = _up = false; _left = true;  _direction_change = true; redraw(); } break;
+		 case 'd': if (_left == false) { _down = _up = _left = false; _right = true;  _direction_change = true; redraw(); }break;
+
+			//case 'h': hit = 1; redraw(); break;
+			 case 27: exit(1); // Esc was pressed
+
+
+		 }
+	 }
+
  }
 
 void AppWindow::glutSpecial ( int key, int x, int y )
@@ -85,7 +103,7 @@ void AppWindow::glutSpecial ( int key, int x, int y )
    bool rd=true;
    const float incr=GS_TORAD(2.5f);
    const float incf=0.05f;
-   switch ( key )
+  /* switch ( key )
     { case GLUT_KEY_LEFT:      _roty-=incr; break;
       case GLUT_KEY_RIGHT:     _roty+=incr; break;
       case GLUT_KEY_UP:        _rotx-=incr; break;
@@ -96,6 +114,7 @@ void AppWindow::glutSpecial ( int key, int x, int y )
       default: return; // return without rendering
 	}
    if (rd) redraw(); // ask the window to be rendered when possible
+	*/
  }
 
 void AppWindow::glutMouse ( int b, int s, int x, int y )
@@ -130,18 +149,31 @@ void AppWindow::glutDisplay ()
 
    //if a change is detected it will rebuild
    if ( _axis.changed ) _axis.build(1.01f); 
-   if (_fruit.changed) _fruit.build(randx, randy);
+   if (_fruit.changed) {
+	   if (hit_fruit == true) {
+		   srand(time(NULL));
+		   randx = static_cast<double>(rand() % 100) / 100.0f;
+		   randy = static_cast<double>(rand() % 100) / 100.0f;
+		   
+	   }
+	   _fruit.build(randx, randy);
+   }
    if (_snake.changed) {
 	
-	   it = xx.begin();
-	   xx.insert(it, right);
+	   if (hit_fruit == false && _direction_change == false) {
+		   it = xx.begin();
+		   xx.insert(it, right);
 
-	   it = yy.begin();
-	   yy.insert(it, up);
+		   it = yy.begin();
+		   yy.insert(it, up);
 
-	   if (hit == 1) {
+	   }
+
+	   _direction_change = false;
+
+	   if (hit_fruit == true) {
 		   size += 4;
-		   hit = 0;
+		   hit_fruit = false;
 	   }
 	   _snake.build(size, xx, yy, right, up);
    }
@@ -163,8 +195,8 @@ void AppWindow::glutDisplay ()
 
   
    // Draw:
-   if ( _viewaxis ) _axis.draw ( stransf, sproj );
-   //_fruit.draw(stransf, sproj);
+   _axis.draw ( stransf, sproj );
+   _fruit.draw(stransf, sproj);
    _snake.draw(stransf, sproj);
   
    // Swap buffers and draw:
@@ -173,20 +205,22 @@ void AppWindow::glutDisplay ()
 }
 
 bool Collision(int sizes, int SoF, float randx, float randy, std::vector<float> &x, std::vector<float> &y) {
+	
+	float r = 0.016f;
 	//Snake collides against himself
+	
 	if (SoF == 1) {
 
 		for (int i = 1; i < sizes; i++) {
 
-			if (x[1] == x[i]) {
-				
-				for (int j = 1; j < sizes; j++) {
-					if (y[1] == y[j])
+			if (x[0] == x[i]) {
+				if(y[0] == y[i]) {
 						return true;
 				}
 			}
 			
 		}
+
 		return false;
 
 	}
@@ -194,86 +228,99 @@ bool Collision(int sizes, int SoF, float randx, float randy, std::vector<float> 
 	else if (SoF == 2) {
 
 		for (int i = 0; i < sizes; i++) {
-
-			if (randx == x[i]) {
-				if (randy == y[i])
+			cout << "x:\t" << x[i] << "y:\t" << y[i] << endl;
+			cout << "randx:\t" << randx + r << "randy:\t" << randy + r << endl;
+			if ((randx+ r) >= x[i] && (randx- r) <= x[i] ) {
+				if ((randy+ r) >= y[i] && (randy - r) <= y[i])
 					return true;
 			}
 				
 		}
 		return false;
 	}
+	 
 	else
 		return false;
+		
 }
 
 
 //glutIdle() function is always running in the background, as long as the program is running so will glutIdle()
 //so any movements or detections should be placed in this function 
 void AppWindow::glutIdle() {
-
+	///*
 	int time = glutGet(GLUT_ELAPSED_TIME);
 	
 	if (_gameover == false) {
 		if (_up == true) {
 
 			if ((time % 200) == 0) {
-				up += 0.05;
+				up += 0.05f;
 				_snake.changed = true;					//signify a change has occured
 				redraw();								//redraw with change
 
 				if (up >= 1.01) _gameover = true;
-				if(_gameover == false)
-					_gameover = Collision(size, 1, 0.0f,0.0f,xx,yy);
-				if (_gameover = false)
-					_gameover = Collision(size, 2, randx, randy, xx, yy);
+				if (_gameover == false)
+					if (size > 2)
+						_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover == false)
+					if (hit_fruit == false)
+						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
+
 			}
 		}
 		else if (_down == true) {
 
 			if ((time % 200) == 0) {
-				
-				up -= 0.05;
+
+				up -= 0.05f;
 				_snake.changed = true;
 				redraw();
 
 				if (up <= -1.01) _gameover = true;
 				if (_gameover == false)
-					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
-				if (_gameover = false)
-					_gameover = Collision(size, 2, randx, randy, xx, yy);
+					if (size > 2)
+						_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover == false)
+					if (hit_fruit == false)
+						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
+
 			}
 
 		}
 		else if (_right == true) {
 
 			if ((time % 200) == 0) {
-				right += 0.05;
+				right += 0.05f;
 				_snake.changed = true;
 				redraw();
 
 				if (right >= 1.01) _gameover = true;
 				if (_gameover == false)
-					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
-				if (_gameover = false)
-					_gameover = Collision(size, 2, randx, randy, xx, yy);
+					if (size > 2)
+						_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover == false)
+					if (hit_fruit == false)
+						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
 
 			}
 		}
 		else if (_left == true) {
 
 			if ((time % 200) == 0) {
-				right -= 0.05;
+				right -= 0.05f;
 				_snake.changed = true;
 				redraw();
 
 				if (right <= -1.01) _gameover = true;
 				if (_gameover == false)
-					_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
-				if (_gameover = false)
-					_gameover = Collision(size, 2, randx, randy, xx, yy);
+					if (size > 2)
+						_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
+				if (_gameover == false)
+					if (hit_fruit == false) {
+						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
+					}
 			}
 		}
 	}
-
 }

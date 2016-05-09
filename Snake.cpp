@@ -19,8 +19,8 @@ void Snake::init(const GlProgram& prog)
 
 void Snake::build(int size, std::vector<float>& x, std::vector<float>& y, float right, float up )
 {
-	int i;
-	float r = 0.01;
+	//int i;
+	float r = 0.01f;
 	const float d = r / 20.0f;
 	const float depth = 0.0;
 
