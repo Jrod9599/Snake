@@ -18,30 +18,21 @@ void SoAxis::init ( const GlProgram& prog )
 
 void SoAxis::build ( float r)
  {
-   int i;
-   const float d=r/20.0f;
-   ranX = 1.0; //(rand() % 100) / 100;
-   ranY = 2.0;//(rand() % 100) / 100;
-   
+ 
    P.clear(); C.clear();   // set size to zero, just in case
-  P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
+   P.reserve(8); C.reserve(8); // reserve space to avoid re-allocations from the calls below
    
-   P.push_back( GsVec( -r,  r, 0 ) );
-   P.push_back( GsVec( r, r, 0 ) );
-   for ( i=0; i<2; i++ ) C.push_back( GsColor::lightgray ); // recall that GsColor has r,g,b,a values
+   P.push_back( GsVec( -r,  r, 0 ) ); P.push_back( GsVec( r, r, 0 ) );
+   for (int i=0; i<2; i++ ) C.push_back( GsColor::lightgray ); // recall that GsColor has r,g,b,a values
 
-   P.push_back( GsVec( -r, -r,  0 ) );
-   P.push_back( GsVec( -r, r, 0 ) );
-    for ( i=0; i<2; i++ ) C.push_back( GsColor::lightgray );
+   P.push_back( GsVec( -r, -r,  0 ) ); P.push_back( GsVec( -r, r, 0 ) );
+    for (int i=0; i<2; i++ ) C.push_back( GsColor::lightgray );
 
-	P.push_back(GsVec(r, -r, 0));
-	P.push_back(GsVec(r, r, 0));
-	for (i = 0; i<2; i++) C.push_back(GsColor::lightgray );
+	P.push_back(GsVec(r, -r, 0));P.push_back(GsVec(r, r, 0));
+	for (int i = 0; i<2; i++) C.push_back(GsColor::lightgray );
 
-   glColor3f ( 0, 0, 1 );		
-   P.push_back( GsVec( -r, -r,  0 ) );
-   P.push_back( GsVec( r, -r, 0 ) );
-   for ( i=0; i<2; i++ ) C.push_back( GsColor::lightgray );
+   P.push_back( GsVec( -r, -r,  0 ) ); P.push_back( GsVec( r, -r, 0 ) );
+   for (int i=0; i<2; i++ ) C.push_back( GsColor::lightgray );
    
    // send data to OpenGL buffers:
    glBindBuffer ( GL_ARRAY_BUFFER, buf[0] );

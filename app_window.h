@@ -6,7 +6,6 @@
 # include <gsim/gs_color.h>
 # include <gsim/gs_vec.h>
 # include <ctime>
-//# include <stdlib.h>
 # include "ogl_tools.h"
 # include "glut_window.h"
 # include "so_axis.h"
@@ -16,34 +15,30 @@
 
 // The functionality of your application should be implemented inside AppWindow
 class AppWindow : public GlutWindow
- { private :
-    // OpenGL shaders and programs:
+ { 
+ private :
+    
+	 // OpenGL shaders and programs:
     GlShader _vertexsh, _fragsh;
     GlProgram _prog;
-    // My scene objects:
+    
+	// My scene objects:
     SoAxis _axis;
 	Fruit  _fruit;
 	Snake  _snake;
 	
     // App data:
     enum MenuEv { evOption0, evOption1 };
-    float _rotx, _roty, _fovy;
+    float _rotx, _roty, _fovy, up, right, test;
     bool  _viewaxis, _viewsnake;
-	bool _up,_down,_left, _right;
-	bool _direction_change;
-	bool _gameover, start;
-	bool hit_fruit;
+	bool _up,_down,_left, _right, _direction_change, _gameover, start, hit_fruit;
     int _w, _h, size;
 
 	float randx, randy;
 
-	int hit;
-
 	std::vector<float> xx;
 	std::vector<float> yy;
 	std::vector<float>::iterator it;
-
-	float up, right, test;
 
    public :
     AppWindow ( const char* label, int x, int y, int w, int h );
@@ -59,12 +54,6 @@ class AppWindow : public GlutWindow
     virtual void glutDisplay ();
     virtual void glutReshape ( int w, int h );
 	virtual void glutIdle();
-	//virtual bool Collision(int size, int SoF, float randx, float randy, std::vector<float> x, std::vector<float> y);
-	
-	float rt =  1;
-	float rb = 1;
-	float len = 1;
-	float nfaces = 1;
  };
 
 #endif // APP_WINDOW_H

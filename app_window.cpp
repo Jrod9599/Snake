@@ -13,14 +13,7 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    addMenuEntry ( "Option 0", evOption0 );
    addMenuEntry ( "Option 1", evOption1 );
    _viewaxis = true;
-   _up = false;
-   _down = false;
-   _right = false;
-   _left = false;
-   _gameover = false;
-   _direction_change = false;
-   start = false;
-   hit_fruit = false;
+   _up = _down = _right = _left =_gameover = _direction_change = start = hit_fruit = false;
    _fovy = GS_TORAD(60.0f);
    _rotx = _roty = 0;
    _w = w;
@@ -28,7 +21,6 @@ AppWindow::AppWindow ( const char* label, int x, int y, int w, int h )
    up = 0.0;
    right = 0.0;
    size = 2;
-   hit = 0;
    test = 0.0f;
 
    randx = -0.5f;
@@ -74,23 +66,17 @@ void AppWindow::glutKeyboard ( unsigned char key, int x, int y )
 		 case 's': if (_up == false) { _up = _right = _left = false; _down = true; redraw(); }start = true; break;
 		 case 'a': if (_right == false) { _down = _right = _up = false; _left = true; redraw(); }start = true; break;
 		 case 'd': if (_left == false) { _down = _up = _left = false; _right = true; redraw(); }start = true; break;
-	
-		 case 'h': hit = 1; redraw(); break;
-		 case 27: exit(1); // Esc was pressed
-
 
 		 }
 	 }
 	 else {
-
 		 switch (key) {
 		 case 'w': if (_down == false) { _down = _right = _left = false;  _up = true;  _direction_change = true; redraw(); } break;
 		 case 's': if (_up == false) { _up = _right = _left = false; _down = true;  _direction_change = true; redraw(); }break;
 		 case 'a': if (_right == false) { _down = _right = _up = false; _left = true;  _direction_change = true; redraw(); } break;
 		 case 'd': if (_left == false) { _down = _up = _left = false; _right = true;  _direction_change = true; redraw(); }break;
 
-			//case 'h': hit = 1; redraw(); break;
-			 case 27: exit(1); // Esc was pressed
+		 case 27: exit(1); // Esc was pressed
 
 
 		 }
@@ -103,37 +89,13 @@ void AppWindow::glutSpecial ( int key, int x, int y )
    bool rd=true;
    const float incr=GS_TORAD(2.5f);
    const float incf=0.05f;
-  /* switch ( key )
-    { case GLUT_KEY_LEFT:      _roty-=incr; break;
-      case GLUT_KEY_RIGHT:     _roty+=incr; break;
-      case GLUT_KEY_UP:        _rotx-=incr; break;
-      case GLUT_KEY_DOWN:      _rotx+=incr; break;
-      case GLUT_KEY_PAGE_UP:   _fovy-=incf; break;
-      case GLUT_KEY_PAGE_DOWN: _fovy+=incf; break;
-      case GLUT_KEY_HOME:      _fovy=GS_TORAD(60.0f); _rotx=_roty=0; break;
-      default: return; // return without rendering
-	}
-   if (rd) redraw(); // ask the window to be rendered when possible
-	*/
  }
 
-void AppWindow::glutMouse ( int b, int s, int x, int y )
- {
-   // The mouse is not used in this example.
-   // Recall that a mouse click in the screen corresponds
-   // to a whole line traversing the 3D scene.
- }
+void AppWindow::glutMouse ( int b, int s, int x, int y ){}
 
-void AppWindow::glutMotion ( int x, int y )
- {
- }
+void AppWindow::glutMotion ( int x, int y ){}
 
-void AppWindow::glutMenu ( int m )
- {
-   std::cout<<"Menu Event: "<<m<<std::endl;
-   std::cout << "W = Up \n S = Down \n A = Left \n D = Right \n Hit any direction to begin";
-   //std::cout<<
- }
+void AppWindow::glutMenu ( int m ){}
 
 void AppWindow::glutReshape ( int w, int h )
  {
@@ -153,8 +115,7 @@ void AppWindow::glutDisplay ()
 	   if (hit_fruit == true) {
 		   srand(time(NULL));
 		   randx = static_cast<double>(rand() % 100) / 100.0f;
-		   randy = static_cast<double>(rand() % 100) / 100.0f;
-		   
+		   randy = static_cast<double>(rand() % 100) / 100.0f;  
 	   }
 	   _fruit.build(randx, randy);
    }
@@ -166,7 +127,6 @@ void AppWindow::glutDisplay ()
 
 		   it = yy.begin();
 		   yy.insert(it, up);
-
 	   }
 
 	   _direction_change = false;
@@ -175,6 +135,7 @@ void AppWindow::glutDisplay ()
 		   size += 4;
 		   hit_fruit = false;
 	   }
+
 	   _snake.build(size, xx, yy, right, up);
    }
    // Define our scene transformation:
@@ -195,7 +156,7 @@ void AppWindow::glutDisplay ()
 
   
    // Draw:
-   _axis.draw ( stransf, sproj );
+   _axis.draw ( stransf, sproj);
    _fruit.draw(stransf, sproj);
    _snake.draw(stransf, sproj);
   
@@ -207,40 +168,27 @@ void AppWindow::glutDisplay ()
 bool Collision(int sizes, int SoF, float randxx, float randyy, std::vector<float> &x, std::vector<float> &y) {
 	
 	float r = 0.021f;
-	//Snake collides against himself
-	
-	if (SoF == 1) {
 
+	//Snake collides against himself
+	if (SoF == 1) {
 		for (int i = 1; i < sizes; i++) {
 
-			if (x[0] == x[i]) {
-				if(y[0] == y[i]) {
-						return true;
-				}
-			}
-			
+			if (x[0] == x[i])
+				if(y[0] == y[i])
+						return true;	
 		}
-
 		return false;
-
 	}
+
 	//Snake collides with fruit
 	else if (SoF == 2) {
-
 		for (int i = 0; i < sizes; i++) {
-			cout << "x:\t" << x[i] << "y:\t" << y[i] << endl;
-			cout << "randx:\t" << randxx + r << "randy:\t" << randyy + r << endl;
-			if ((randxx+ r) >= x[i] && (randxx- r) <= x[i] ) {
+			if ((randxx+ r) >= x[i] && (randxx- r) <= x[i] )
 				if ((randyy+ r) >= y[i] && (randyy - r) <= y[i])
 					return true;
-			}
-				
 		}
 		return false;
 	}
-	 
-	else
-		return false;
 		
 }
 
@@ -252,6 +200,7 @@ void AppWindow::glutIdle() {
 	int time = glutGet(GLUT_ELAPSED_TIME);
 	
 	if (_gameover == false) {
+
 		if (_up == true) {
 
 			if ((time % 200) == 0) {
@@ -266,7 +215,6 @@ void AppWindow::glutIdle() {
 				if (_gameover == false)
 					if (hit_fruit == false)
 						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
-
 			}
 		}
 		else if (_down == true) {
@@ -286,7 +234,6 @@ void AppWindow::glutIdle() {
 						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
 
 			}
-
 		}
 		else if (_right == true) {
 
@@ -317,9 +264,8 @@ void AppWindow::glutIdle() {
 					if (size > 2)
 						_gameover = Collision(size, 1, 0.0f, 0.0f, xx, yy);
 				if (_gameover == false)
-					if (hit_fruit == false) {
+					if (hit_fruit == false)
 						hit_fruit = Collision(size, 2, randx, randy, xx, yy);
-					}
 			}
 		}
 	}

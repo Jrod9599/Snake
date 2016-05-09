@@ -27,24 +27,22 @@ void Fruit::build(float x, float y)
 	const float d = r / 20.0f;
 
 	P.clear(); C.clear();   // set size to zero, just in case
-	P.reserve(18); C.reserve(20); // reserve space to avoid re-allocations from the calls below
+	P.reserve(8); C.reserve(8); // reserve space to avoid re-allocations from the calls below
+	
 	//top of box
-	P.push_back(GsVec(-r + x, r + y, 0));
-	P.push_back(GsVec(r + x, r + y, 0));
+	P.push_back(GsVec(-r + x, r + y, 0)); P.push_back(GsVec(r + x, r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red); // recall that GsColor has r,g,b,a values
+
 	//left wall of box
-	P.push_back(GsVec(-r + x, -r + y, 0));
-	P.push_back(GsVec(-r + x, r + y, 0));
-	for (i = 0; i<2; i++) C.push_back(GsColor::red);
-	//right wall of box
-	P.push_back(GsVec(r + x, -r + y, 0));
-	P.push_back(GsVec(r + x, r + y, 0));
+	P.push_back(GsVec(-r + x, -r + y, 0)); P.push_back(GsVec(-r + x, r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red);
 
-	//glColor3f(0, 0, 1);
+	//right wall of box
+	P.push_back(GsVec(r + x, -r + y, 0)); P.push_back(GsVec(r + x, r + y, 0));
+	for (i = 0; i<2; i++) C.push_back(GsColor::red);
+
 	//bottom of box
-	P.push_back(GsVec(-r + x, -r + y, 0));
-	P.push_back(GsVec(r + x, -r + y, 0));
+	P.push_back(GsVec(-r + x, -r + y, 0)); P.push_back(GsVec(r + x, -r + y, 0));
 	for (i = 0; i<2; i++) C.push_back(GsColor::red);
 
 	// send data to OpenGL buffers:

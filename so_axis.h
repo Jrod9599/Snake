@@ -17,7 +17,6 @@ class SoAxis : public GlObjects
     std::vector<GsVec>   P; // coordinates
     std::vector<GsColor> C; // colors
     int _numpoints;         // saves the number of points
-	double ranX, ranY;
 
    public :
     SoAxis ();
