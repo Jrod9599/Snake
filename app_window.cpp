@@ -204,9 +204,9 @@ void AppWindow::glutDisplay ()
    glutSwapBuffers(); // we were drawing to the back buffer, now bring it to the front
 }
 
-bool Collision(int sizes, int SoF, float randx, float randy, std::vector<float> &x, std::vector<float> &y) {
+bool Collision(int sizes, int SoF, float randxx, float randyy, std::vector<float> &x, std::vector<float> &y) {
 	
-	float r = 0.016f;
+	float r = 0.021f;
 	//Snake collides against himself
 	
 	if (SoF == 1) {
@@ -229,9 +229,9 @@ bool Collision(int sizes, int SoF, float randx, float randy, std::vector<float> 
 
 		for (int i = 0; i < sizes; i++) {
 			cout << "x:\t" << x[i] << "y:\t" << y[i] << endl;
-			cout << "randx:\t" << randx + r << "randy:\t" << randy + r << endl;
-			if ((randx+ r) >= x[i] && (randx- r) <= x[i] ) {
-				if ((randy+ r) >= y[i] && (randy - r) <= y[i])
+			cout << "randx:\t" << randxx + r << "randy:\t" << randyy + r << endl;
+			if ((randxx+ r) >= x[i] && (randxx- r) <= x[i] ) {
+				if ((randyy+ r) >= y[i] && (randyy - r) <= y[i])
 					return true;
 			}
 				
