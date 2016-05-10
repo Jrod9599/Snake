@@ -32,7 +32,7 @@ class AppWindow : public GlutWindow
     float _rotx, _roty, _fovy, up, right, test;
     bool  _viewaxis, _viewsnake;
 	bool _up,_down,_left, _right, _direction_change, _gameover, start, hit_fruit;
-    int _w, _h, size;
+    int _w, _h, size, score;
 
 	float randx, randy;
 
